@@ -13,12 +13,13 @@ and found some things I want to change so figured I'd play around with it a bit.
 
 1. Commenting existing source
 2. Add functions around blocks of code
-3. Change required package logic
+3. Change file outputs from echos to heredocs
+4. Change required package logic
     - check for packages installed before testing they are installed
-4. Change file outputs from echos to heredoc
-5. Debian packaging
-6. Update Repository
-7. Possibly Automate updates
+5. Fix Uninstall
+6. Debian packaging
+7. Update Repository
+8. Possibly Automate updates
 
 ## Configuration
 
