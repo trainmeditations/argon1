@@ -487,8 +487,12 @@ argon_enable_services() {
 #Create desktop shortcuts
 argon_create_desktopshortcuts() {
 	if [ -d $SHORTCUT_PREFIX ]; then
-		wget http://download.argon40.com/ar1config.png -O $PREFIX/share/pixmaps/ar1config.png
-		wget http://download.argon40.com/ar1uninstall.png -O $PREFIX/share/pixmaps/ar1uninstall.png
+		if [ ! -f "${PREFIX}/share/pixmaps/ar1config.png" ]; then
+			wget http://download.argon40.com/ar1config.png -O $PREFIX/share/pixmaps/ar1config.png
+		fi
+		if [ ! -f "${PREFIX}/share/pixmaps/ar1uninstall.png" ]; then
+			wget http://download.argon40.com/ar1uninstall.png -O $PREFIX/share/pixmaps/ar1uninstall.png
+		fi
 		# Create Shortcuts
 		shortcutfile="${SHORTCUT_PREFIX}argonone-config.desktop"
 		echo "[Desktop Entry]" > $shortcutfile
