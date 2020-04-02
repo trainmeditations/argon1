@@ -106,17 +106,17 @@ argon_create_shutdownscript() {
 	echo 'import RPi.GPIO as GPIO' >> $shutdownscript
 	echo 'rev = GPIO.RPI_REVISION' >> $shutdownscript
 	echo 'if rev == 2 or rev == 3:' >> $shutdownscript
-	echo '	bus = smbus.SMBus(1)' >> $shutdownscript
+	echo '    bus = smbus.SMBus(1)' >> $shutdownscript
 	echo 'else:' >> $shutdownscript
-	echo '	bus = smbus.SMBus(0)' >> $shutdownscript
+	echo '    bus = smbus.SMBus(0)' >> $shutdownscript
 
 	echo 'if len(sys.argv)>1:' >> $shutdownscript
-	echo "	bus.write_byte(0x1a,0)"  >> $shutdownscript
-	echo '	if sys.argv[1] == "poweroff" or sys.argv[1] == "halt":'  >> $shutdownscript
-	echo "		try:"  >> $shutdownscript
-	echo "			bus.write_byte(0x1a,0xFF)"  >> $shutdownscript
-	echo "		except:"  >> $shutdownscript
-	echo "			rev=0"  >> $shutdownscript
+	echo "    bus.write_byte(0x1a,0)"  >> $shutdownscript
+	echo '    if sys.argv[1] == "poweroff" or sys.argv[1] == "halt":'  >> $shutdownscript
+	echo "        try:"  >> $shutdownscript
+	echo "            bus.write_byte(0x1a,0xFF)"  >> $shutdownscript
+	echo "        except:"  >> $shutdownscript
+	echo "            rev=0"  >> $shutdownscript
 	chmod 755 $shutdownscript
 }
 
@@ -133,9 +133,9 @@ argon_create_powerbuttonscript() {
 	echo 'from threading import Thread' >> $powerbuttonscript
 	echo 'rev = GPIO.RPI_REVISION' >> $powerbuttonscript
 	echo 'if rev == 2 or rev == 3:' >> $powerbuttonscript
-	echo '	bus = smbus.SMBus(1)' >> $powerbuttonscript
+	echo '    bus = smbus.SMBus(1)' >> $powerbuttonscript
 	echo 'else:' >> $powerbuttonscript
-	echo '	bus = smbus.SMBus(0)' >> $powerbuttonscript
+	echo '    bus = smbus.SMBus(0)' >> $powerbuttonscript
 
 	echo 'GPIO.setwarnings(False)' >> $powerbuttonscript
 	echo 'GPIO.setmode(GPIO.BCM)' >> $powerbuttonscript
@@ -143,93 +143,93 @@ argon_create_powerbuttonscript() {
 	echo 'GPIO.setup(shutdown_pin, GPIO.IN,  pull_up_down=GPIO.PUD_DOWN)' >> $powerbuttonscript
 
 	echo 'def shutdown_check():' >> $powerbuttonscript
-	echo '	while True:' >> $powerbuttonscript
-	echo '		pulsetime = 1' >> $powerbuttonscript
-	echo '		GPIO.wait_for_edge(shutdown_pin, GPIO.RISING)' >> $powerbuttonscript
-	echo '		time.sleep(0.01)' >> $powerbuttonscript
-	echo '		while GPIO.input(shutdown_pin) == GPIO.HIGH:' >> $powerbuttonscript
-	echo '			time.sleep(0.01)' >> $powerbuttonscript
-	echo '			pulsetime += 1' >> $powerbuttonscript
-	echo '		if pulsetime >=2 and pulsetime <=3:' >> $powerbuttonscript
-	echo '			os.system("reboot")' >> $powerbuttonscript
-	echo '		elif pulsetime >=4 and pulsetime <=5:' >> $powerbuttonscript
-	echo '			os.system("shutdown now -h")' >> $powerbuttonscript
+	echo '    while True:' >> $powerbuttonscript
+	echo '        pulsetime = 1' >> $powerbuttonscript
+	echo '        GPIO.wait_for_edge(shutdown_pin, GPIO.RISING)' >> $powerbuttonscript
+	echo '        time.sleep(0.01)' >> $powerbuttonscript
+	echo '        while GPIO.input(shutdown_pin) == GPIO.HIGH:' >> $powerbuttonscript
+	echo '            time.sleep(0.01)' >> $powerbuttonscript
+	echo '            pulsetime += 1' >> $powerbuttonscript
+	echo '        if pulsetime >=2 and pulsetime <=3:' >> $powerbuttonscript
+	echo '            os.system("reboot")' >> $powerbuttonscript
+	echo '        elif pulsetime >=4 and pulsetime <=5:' >> $powerbuttonscript
+	echo '            os.system("shutdown now -h")' >> $powerbuttonscript
 
 	echo 'def get_fanspeed(tempval, configlist):' >> $powerbuttonscript
-	echo '	for curconfig in configlist:' >> $powerbuttonscript
-	echo '		curpair = curconfig.split("=")' >> $powerbuttonscript
-	echo '		tempcfg = float(curpair[0])' >> $powerbuttonscript
-	echo '		fancfg = int(float(curpair[1]))' >> $powerbuttonscript
-	echo '		if tempval >= tempcfg:' >> $powerbuttonscript
-	echo '			return fancfg' >> $powerbuttonscript
-	echo '	return 0' >> $powerbuttonscript
+	echo '    for curconfig in configlist:' >> $powerbuttonscript
+	echo '        curpair = curconfig.split("=")' >> $powerbuttonscript
+	echo '        tempcfg = float(curpair[0])' >> $powerbuttonscript
+	echo '        fancfg = int(float(curpair[1]))' >> $powerbuttonscript
+	echo '        if tempval >= tempcfg:' >> $powerbuttonscript
+	echo '            return fancfg' >> $powerbuttonscript
+	echo '    return 0' >> $powerbuttonscript
 
 	echo 'def load_config(fname):' >> $powerbuttonscript
-	echo '	newconfig = []' >> $powerbuttonscript
-	echo '	try:' >> $powerbuttonscript
-	echo '		with open(fname, "r") as fp:' >> $powerbuttonscript
-	echo '			for curline in fp:' >> $powerbuttonscript
-	echo '				if not curline:' >> $powerbuttonscript
-	echo '					continue' >> $powerbuttonscript
-	echo '				tmpline = curline.strip()' >> $powerbuttonscript
-	echo '				if not tmpline:' >> $powerbuttonscript
-	echo '					continue' >> $powerbuttonscript
-	echo '				if tmpline[0] == "#":' >> $powerbuttonscript
-	echo '					continue' >> $powerbuttonscript
-	echo '				tmppair = tmpline.split("=")' >> $powerbuttonscript
-	echo '				if len(tmppair) != 2:' >> $powerbuttonscript
-	echo '					continue' >> $powerbuttonscript
-	echo '				tempval = 0' >> $powerbuttonscript
-	echo '				fanval = 0' >> $powerbuttonscript
-	echo '				try:' >> $powerbuttonscript
-	echo '					tempval = float(tmppair[0])' >> $powerbuttonscript
-	echo '					if tempval < 0 or tempval > 100:' >> $powerbuttonscript
-	echo '						continue' >> $powerbuttonscript
-	echo '				except:' >> $powerbuttonscript
-	echo '					continue' >> $powerbuttonscript
-	echo '				try:' >> $powerbuttonscript
-	echo '					fanval = int(float(tmppair[1]))' >> $powerbuttonscript
-	echo '					if fanval < 0 or fanval > 100:' >> $powerbuttonscript
-	echo '						continue' >> $powerbuttonscript
-	echo '				except:' >> $powerbuttonscript
-	echo '					continue' >> $powerbuttonscript
-	echo '				newconfig.append( "{:5.1f}={}".format(tempval,fanval))' >> $powerbuttonscript
-	echo '		if len(newconfig) > 0:' >> $powerbuttonscript
-	echo '			newconfig.sort(reverse=True)' >> $powerbuttonscript
-	echo '	except:' >> $powerbuttonscript
-	echo '		return []' >> $powerbuttonscript
-	echo '	return newconfig' >> $powerbuttonscript
+	echo '    newconfig = []' >> $powerbuttonscript
+	echo '    try:' >> $powerbuttonscript
+	echo '        with open(fname, "r") as fp:' >> $powerbuttonscript
+	echo '            for curline in fp:' >> $powerbuttonscript
+	echo '                if not curline:' >> $powerbuttonscript
+	echo '                    continue' >> $powerbuttonscript
+	echo '                tmpline = curline.strip()' >> $powerbuttonscript
+	echo '                if not tmpline:' >> $powerbuttonscript
+	echo '                    continue' >> $powerbuttonscript
+	echo '                if tmpline[0] == "#":' >> $powerbuttonscript
+	echo '                    continue' >> $powerbuttonscript
+	echo '                tmppair = tmpline.split("=")' >> $powerbuttonscript
+	echo '                if len(tmppair) != 2:' >> $powerbuttonscript
+	echo '                    continue' >> $powerbuttonscript
+	echo '                tempval = 0' >> $powerbuttonscript
+	echo '                fanval = 0' >> $powerbuttonscript
+	echo '                try:' >> $powerbuttonscript
+	echo '                    tempval = float(tmppair[0])' >> $powerbuttonscript
+	echo '                    if tempval < 0 or tempval > 100:' >> $powerbuttonscript
+	echo '                        continue' >> $powerbuttonscript
+	echo '                except:' >> $powerbuttonscript
+	echo '                    continue' >> $powerbuttonscript
+	echo '                try:' >> $powerbuttonscript
+	echo '                    fanval = int(float(tmppair[1]))' >> $powerbuttonscript
+	echo '                    if fanval < 0 or fanval > 100:' >> $powerbuttonscript
+	echo '                        continue' >> $powerbuttonscript
+	echo '                except:' >> $powerbuttonscript
+	echo '                    continue' >> $powerbuttonscript
+	echo '                newconfig.append( "{:5.1f}={}".format(tempval,fanval))' >> $powerbuttonscript
+	echo '        if len(newconfig) > 0:' >> $powerbuttonscript
+	echo '            newconfig.sort(reverse=True)' >> $powerbuttonscript
+	echo '    except:' >> $powerbuttonscript
+	echo '        return []' >> $powerbuttonscript
+	echo '    return newconfig' >> $powerbuttonscript
 
 	echo 'def temp_check():' >> $powerbuttonscript
-	echo '	fanconfig = ["65=100", "60=55", "55=10"]' >> $powerbuttonscript
-	echo '	tmpconfig = load_config("'$daemonconfigfile'")' >> $powerbuttonscript
-	echo '	if len(tmpconfig) > 0:' >> $powerbuttonscript
-	echo '		fanconfig = tmpconfig' >> $powerbuttonscript
-	echo '	address=0x1a' >> $powerbuttonscript
-	echo '	prevblock=0' >> $powerbuttonscript
-	echo '	while True:' >> $powerbuttonscript
-	echo '		temp = os.popen("vcgencmd measure_temp").readline()' >> $powerbuttonscript
-	echo '		temp = temp.replace("temp=","")' >> $powerbuttonscript
-	echo '		val = float(temp.replace("'"'"'C",""))' >> $powerbuttonscript
-	echo '		block = get_fanspeed(val, fanconfig)' >> $powerbuttonscript
-	echo '		if block < prevblock:' >> $powerbuttonscript
-	echo '			time.sleep(30)' >> $powerbuttonscript
-	echo '		prevblock = block' >> $powerbuttonscript
-	echo '		try:' >> $powerbuttonscript
-	echo '			bus.write_byte(address,block)' >> $powerbuttonscript
-	echo '		except IOError:' >> $powerbuttonscript
-	echo '			temp=""' >> $powerbuttonscript
-	echo '		time.sleep(30)' >> $powerbuttonscript
+	echo '    fanconfig = ["65=100", "60=55", "55=10"]' >> $powerbuttonscript
+	echo '    tmpconfig = load_config("'$daemonconfigfile'")' >> $powerbuttonscript
+	echo '    if len(tmpconfig) > 0:' >> $powerbuttonscript
+	echo '        fanconfig = tmpconfig' >> $powerbuttonscript
+	echo '    address=0x1a' >> $powerbuttonscript
+	echo '    prevblock=0' >> $powerbuttonscript
+	echo '    while True:' >> $powerbuttonscript
+	echo '        temp = os.popen("vcgencmd measure_temp").readline()' >> $powerbuttonscript
+	echo '        temp = temp.replace("temp=","")' >> $powerbuttonscript
+	echo '        val = float(temp.replace("'"'"'C",""))' >> $powerbuttonscript
+	echo '        block = get_fanspeed(val, fanconfig)' >> $powerbuttonscript
+	echo '        if block < prevblock:' >> $powerbuttonscript
+	echo '            time.sleep(30)' >> $powerbuttonscript
+	echo '        prevblock = block' >> $powerbuttonscript
+	echo '        try:' >> $powerbuttonscript
+	echo '            bus.write_byte(address,block)' >> $powerbuttonscript
+	echo '        except IOError:' >> $powerbuttonscript
+	echo '            temp=""' >> $powerbuttonscript
+	echo '        time.sleep(30)' >> $powerbuttonscript
 
 	echo 'try:' >> $powerbuttonscript
-	echo '	t1 = Thread(target = shutdown_check)' >> $powerbuttonscript
-	echo '	t2 = Thread(target = temp_check)' >> $powerbuttonscript
-	echo '	t1.start()' >> $powerbuttonscript
-	echo '	t2.start()' >> $powerbuttonscript
+	echo '    t1 = Thread(target = shutdown_check)' >> $powerbuttonscript
+	echo '    t2 = Thread(target = temp_check)' >> $powerbuttonscript
+	echo '    t1.start()' >> $powerbuttonscript
+	echo '    t2.start()' >> $powerbuttonscript
 	echo 'except:' >> $powerbuttonscript
-	echo '	t1.stop()' >> $powerbuttonscript
-	echo '	t2.stop()' >> $powerbuttonscript
-	echo '	GPIO.cleanup()' >> $powerbuttonscript
+	echo '    t1.stop()' >> $powerbuttonscript
+	echo '    t2.stop()' >> $powerbuttonscript
+	echo '    GPIO.cleanup()' >> $powerbuttonscript
 
 	chmod 755 $powerbuttonscript
 }
