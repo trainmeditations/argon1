@@ -217,7 +217,7 @@ argon_create_powerbuttonscript() {
 	    while True:
 	        temp = os.popen("vcgencmd measure_temp").readline()
 	        temp = temp.replace("temp=","")
-	        val = float(temp.replace("'"'"'C",""))
+	        val = float(temp.replace("'C",""))
 	        block = get_fanspeed(val, fanconfig)
 	        if block < prevblock:
 	            time.sleep(30)
@@ -521,11 +521,11 @@ argon_create_desktopshortcuts() {
 		shortcutfile="${SHORTCUT_PREFIX}argonone-config.desktop"
 
 		cat > $shortcutfile <<- EOF
-		echo "[Desktop Entry]" > $shortcutfile
+		[Desktop Entry]
 		Name=Argon One Configuration
 		Comment=Argon One Configuration
 		Icon=/usr/share/pixmaps/ar1config.png
-		Exec=lxterminal -t \"Argon One Configuration\" --working-directory=/home/pi/ -e ${configscript}
+		Exec=lxterminal -t "Argon One Configuration" --working-directory=/home/pi/ -e ${configscript}
 		Type=Application
 		Encoding=UTF-8
 		Terminal=false
@@ -537,11 +537,11 @@ argon_create_desktopshortcuts() {
 		shortcutfile="${SHORTCUT_PREFIX}argonone-uninstall.desktop"
 
 		cat > $shortcutfile <<- EOF
-		echo "[Desktop Entry]" > $shortcutfile
+		[Desktop Entry]
 		Name=Argon One Uninstall
 		Comment=Argon One Uninstall
 		Icon=/usr/share/pixmaps/ar1uninstall.png
-		Exec=lxterminal -t \"Argon One Uninstall\" --working-directory=/home/pi/ -e ${removescript}
+		Exec=lxterminal -t "Argon One Uninstall" --working-directory=/home/pi/ -e ${removescript}
 		Type=Application
 		Encoding=UTF-8
 		Terminal=false
