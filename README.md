@@ -32,7 +32,10 @@ or accept liability for any damage caused.
 
 I have added some environment variables to choose where scripts will be installed,
 rather than having the paths hardcoded to the /usr paths, and the default is now
-/usr/local. I have started removing embedded sudos so the script itself will need to
+/usr/local. This should be the only functional change from the original script
+at this point.
+
+I have removed embedded sudos so the script itself will need to
 be called with sudo. This avoids admin commands running in a terminal with
 previous sudo elevation unexpectedly.
 
