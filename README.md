@@ -9,6 +9,13 @@ I don't like the idea of piping shell scripts to bash for execution, especially
 with embedded sudos. Downloaded the script to have a look before executing it
 and found some things I want to change so figured I'd play around with it a bit.
 
+My modifications are released as openly as the original script. The creators are
+free to include any of my changes as they see fit, although if they do a bit of
+acknowledgement would be nice. As there is no copyright or license notice with the
+original script I will not add one here. I did try to contact the developers but
+have had no response. By using my version of the script I offer no warranty of fitness
+or accept liability for any damage caused.
+
 ## Plans
 
 1. Commenting existing source
