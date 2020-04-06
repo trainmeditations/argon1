@@ -23,18 +23,35 @@ argon_check_pkg() {
 
 # installs necessary packages
 argon_install_required_pkgs() {
-	pkglist=(raspi-gpio python-rpi.gpio python3-rpi.gpio python-smbus python3-smbus i2c-tools)
-	for curpkg in ${pkglist[@]}; do
-		apt-get install -y $curpkg
-		RESULT=$(argon_check_pkg "$curpkg")
-		if [ "NG" == "$RESULT" ]
-		then
-			echo "********************************************************************"
-			echo "Please also connect device to the internet and restart installation."
-			echo "********************************************************************"
-			exit
-		fi
+		pkglist=(raspi-gpio python-rpi.gpio python3-rpi.gpio python-smbus python3-smbus i2c-tools)
+		install_list=()
+		for curpkg in ${pkglist[@]}; do
+				RESULT=$(argon_check_pkg $curpkg)
+				if [ "$RESULT" == "NG" ]; then
+						install_list+=( $curpkg )
+				fi
 		done
+		if [ "${#install_list[@]}" -gt 0 ]; then
+				echo "The following packages need to be installed: ${install_list[@]}"
+				read -p "Do you want to install these packages now? " -n 1 -r
+				echo
+				if [[ $REPLY =~ ^[yY]$ ]]; then
+						apt install -y ${install_list[@]}
+						INSTALLRESULT=$?
+				else
+						echo "********************************************************************************"
+						echo "The required packages must be installed. Please run this script again when ready"
+						echo "********************************************************************************"
+						exit 1
+				fi
+		fi
+		if [ $INSTALLRESULT -ne 0 ]; then
+				echo "**********************************************************************"
+				echo "Package installation failed. Please ensure internet is connected, your"
+				echo "repository caches are up to date and you have installation privileges."
+				echo "**********************************************************************"
+				exit 1
+		fi
 }
 
 #application shortcut location
