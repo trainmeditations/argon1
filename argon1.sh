@@ -33,9 +33,9 @@ argon_install_required_pkgs() {
 		done
 		if [ "${#install_list[@]}" -gt 0 ]; then
 				echo "The following packages need to be installed: ${install_list[@]}"
-				read -p "Do you want to install these packages now? " -n 1 -r
+				read -p "Press y to install these packages now? " -n 1 -r
 				echo
-				if [[ $REPLY =~ ^[yY]$ ]]; then
+				if [[ $REPLY =~ ^[yY] ]]; then
 						if ! apt install -y ${install_list[@]}; then
 							echo "**********************************************************************"
 							echo "Package installation failed. Please ensure internet is connected, your"
@@ -286,41 +286,55 @@ argon_create_removescript() {
 	cat > $removescript <<- EOF
 	#!/bin/bash
 	SHORTCUT_PREFIX=$SHORTCUT_PREFIX
+	PREFIX=$PREFIX
 	daemonname=$daemonname
 	powerbuttonscript=$powerbuttonscript
 	shutdownscript=$shutdownscript
+	configscript=$configscript
 	removescript=$removescript
+	daemonfanservice=$daemonfanservice
+	daemonconfigfile=$daemonconfigfile
+	install_list=(${install_list[@]})
 	EOF
 	cat >> $removescript <<- "EOF"
 	echo "-------------------------"
 	echo "Argon One Uninstall Tool"
 	echo "-------------------------"
-	echo -n "Press Y to continue:"
-	read -n 1 confirm
+	read -p "Press Y to continue: " -n 1 -r
 	echo
-	if [ "$confirm" = "y" ]
-	then
-	    confirm="Y"
-	fi
-	
-	if [ "$confirm" != "Y" ]
-	then
+	if ! [[ $REPLY =~ ^[yY] ]]; then
 	    echo "Cancelled"
-	    exit
+	    exit 1
 	fi
 	if [ -d $SHORTCUT_PREFIX ]; then
-	    rm \"${SHORTCUT_PREFIX}argonone-config.desktop\"
-	    rm \"${SHORTCUT_PREFIX}argonone-uninstall.desktop\"
+	    rm "${SHORTCUT_PREFIX}argonone-config.desktop"
+	    rm "${SHORTCUT_PREFIX}argonone-uninstall.desktop"
+	    rm "${PREFIX}/share/pixmaps/ar1config.png"
+	    rm "${PREFIX}/share/pixmaps/ar1uninstall.png"
 	fi
 	if [ -f $powerbuttonscript ]; then
 	    systemctl stop $daemonname.service
 	    systemctl disable $daemonname.service
-	    /usr/bin/python3 $shutdownscript uninstall
+	    systemctl daemon-reload
+	    $shutdownscript uninstall
 	    rm $powerbuttonscript
 	    rm $shutdownscript
+	    rm $configscript
 	    rm $removescript
+	    rm $daemonfanservice
+	    echo "Config file remains at ${daemonconfigfile}"
+	    read -p "Press Y to delete: " -n 1 -r
+		if [[ $REPLY =~ ^[yY] ]]; then
+	        rm $daemonconfigfile
+		fi
 	    echo "Removed Argon One Services."
-	    echo "Cleanup will complete after restarting the device."
+	    if [ "${#install_list[@]}" -gt 0 ]; then
+	        echo
+	        echo "The following packages were installed by the argonone installer:"
+			echo "	${install_list[@]}"
+	        echo
+			echo "If they are no longer needed you can remove them."
+		fi
 	fi
 	EOF
 
@@ -328,7 +342,7 @@ argon_create_removescript() {
 }
 
 #Generate config script
-argon_create_config() {
+argon_create_configscript() {
 
 	argon_create_file $configscript
 
@@ -343,18 +357,11 @@ argon_create_config() {
 	echo "Argon One Fan Speed Configuration Tool"
 	echo "--------------------------------------"
 	echo "WARNING: This will remove existing configuration."
-	echo -n "Press Y to continue:"
-	read -n 1 confirm
+	read -p "Press Y to continue: " -n 1 -r
 	echo
-	if [ "$confirm" = "y" ]
-	then
-	    confirm="Y"
-	fi
-	
-	if [ "$confirm" != "Y" ]
-	then
+	if ! [[ $REPLY =~ ^[yY] ]]; then
 	    echo "Cancelled"
-	    exit
+	    exit 1
 	fi
 	echo "Thank you."
 
@@ -582,7 +589,7 @@ argon_create_shutdownscript
 argon_create_powerbuttonscript
 argon_create_daemonfanservice
 argon_create_removescript
-argon_create_config
+argon_create_configscript
 if [ -z $NOSVC ]
 then
 	argon_enable_services
