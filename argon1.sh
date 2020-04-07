@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # checks if file exists, delete's if it does then creates
 # it with user write permissions
@@ -7,7 +7,7 @@ argon_create_file() {
         rm $1
     fi
 	touch $1
-	chmod 664 $1
+	chmod 644 $1
 }
 
 # checks if a package is installed with dpkg
@@ -36,21 +36,19 @@ argon_install_required_pkgs() {
 				read -p "Do you want to install these packages now? " -n 1 -r
 				echo
 				if [[ $REPLY =~ ^[yY]$ ]]; then
-						apt install -y ${install_list[@]}
-						INSTALLRESULT=$?
+						if ! apt install -y ${install_list[@]}; then
+							echo "**********************************************************************"
+							echo "Package installation failed. Please ensure internet is connected, your"
+							echo "repository caches are up to date and you have installation privileges."
+							echo "**********************************************************************"
+							exit 1
+						fi
 				else
 						echo "********************************************************************************"
 						echo "The required packages must be installed. Please run this script again when ready"
 						echo "********************************************************************************"
 						exit 1
 				fi
-		fi
-		if [ $INSTALLRESULT -ne 0 ]; then
-				echo "**********************************************************************"
-				echo "Package installation failed. Please ensure internet is connected, your"
-				echo "repository caches are up to date and you have installation privileges."
-				echo "**********************************************************************"
-				exit 1
 		fi
 }
 
