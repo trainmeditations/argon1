@@ -3,6 +3,7 @@
 # checks if file exists, delete's if it does then creates
 # it with user write permissions
 argon_create_file() {
+	mkdir -p `dirname $1`
 	if [ -f $1 ]; then
         rm $1
     fi
@@ -83,6 +84,7 @@ argon_enable_busses() {
 argon_create_daemonconfigfile() {
 	if [ ! -f $daemonconfigfile ]; then
 		# Generate config file for fan speed
+		mkdir -p `dirname $daemonconfigfile`
 		touch $daemonconfigfile
 		chmod 664 $daemonconfigfile
 
@@ -533,6 +535,7 @@ argon_enable_services() {
 #Create desktop shortcuts
 argon_create_desktopshortcuts() {
 	if [ -d $SHORTCUT_PREFIX ]; then
+		mkdir -p ${PREFIX}/share/pixmaps
 		if [ ! -f "${PREFIX}/share/pixmaps/ar1config.png" ]; then
 			wget http://download.argon40.com/ar1config.png -O $PREFIX/share/pixmaps/ar1config.png
 		fi
