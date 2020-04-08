@@ -53,16 +53,16 @@ argon_install_required_pkgs() {
 		fi
 }
 
-#application shortcut location
-if [ -z "$SHORTCUT_PREFIX" ]
-then
-	SHORTCUT_PREFIX="/home/pi/Desktop/"
-fi
-
 #instalation prefix
 if [ -z "$PREFIX" ]
 then
 	PREFIX="/usr/local"
+fi
+
+#application shortcut location
+if [ -z "$SHORTCUT_PREFIX" ]
+then
+	SHORTCUT_PREFIX="${PREFIX}/share/applications/"
 fi
 
 #filenames and locations
@@ -555,10 +555,10 @@ argon_create_desktopshortcuts() {
 		Type=Application
 		Encoding=UTF-8
 		Terminal=false
-		Categories=None;
+		Categories=ConsoleOnly;Settings;
 		EOF
 
-		chmod 755 $shortcutfile
+		chmod 644 $shortcutfile
 		
 		shortcutfile="${SHORTCUT_PREFIX}argonone-uninstall.desktop"
 
@@ -571,10 +571,10 @@ argon_create_desktopshortcuts() {
 		Type=Application
 		Encoding=UTF-8
 		Terminal=false
-		Categories=None;
+		Categories=ConsoleOnly;System;
 		EOF
 
-		chmod 755 $shortcutfile
+		chmod 644 $shortcutfile
 	fi
 }
 
