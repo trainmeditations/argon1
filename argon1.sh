@@ -326,6 +326,7 @@ argon_create_removescript() {
 	    rm $daemonfanservice
 	    echo "Config file remains at ${daemonconfigfile}"
 	    read -p "Press Y to delete: " -n 1 -r
+		echo
 		if [[ $REPLY =~ ^[yY] ]]; then
 	        rm $daemonconfigfile
 		fi
