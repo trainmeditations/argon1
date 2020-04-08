@@ -68,7 +68,7 @@ fi
 #filenames and locations
 daemonname="argononed"
 powerbuttonscript="${PREFIX}/bin/${daemonname}.py"
-shutdownscript="${PREFIX}/lib/systemd/system-shutdown/${daemonname}-poweroff.py"
+shutdownscript="/lib/systemd/system-shutdown/${daemonname}-poweroff.py"
 daemonconfigfile="${CONF_PREFIX}/etc/${daemonname}.conf"
 configscript="${PREFIX}/bin/argonone-config"
 removescript="${PREFIX}/bin/argonone-uninstall"
