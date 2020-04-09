@@ -551,10 +551,10 @@ argon_create_desktopshortcuts() {
 		Name=Argon One Configuration
 		Comment=Argon One Configuration
 		Icon=/usr/share/pixmaps/ar1config.png
-		Exec=lxterminal -t "Argon One Configuration" --working-directory=/home/pi/ -e ${configscript}
+		Exec=sudo ${configscript}
 		Type=Application
 		Encoding=UTF-8
-		Terminal=false
+		Terminal=true
 		Categories=ConsoleOnly;Settings;
 		EOF
 
@@ -567,10 +567,10 @@ argon_create_desktopshortcuts() {
 		Name=Argon One Uninstall
 		Comment=Argon One Uninstall
 		Icon=/usr/share/pixmaps/ar1uninstall.png
-		Exec=lxterminal -t "Argon One Uninstall" --working-directory=/home/pi/ -e ${removescript}
+		Exec=sudo ${removescript}
 		Type=Application
 		Encoding=UTF-8
-		Terminal=false
+		Terminal=true
 		Categories=ConsoleOnly;System;
 		EOF
 
