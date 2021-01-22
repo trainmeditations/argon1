@@ -15,16 +15,32 @@ argon_create_file() {
 argon_check_pkg() {
     RESULT=$(dpkg-query -W -f='${Status}\n' "$1" 2> /dev/null | grep "installed")
 
-    if [ "" == "$RESULT" ]; then
+    if [ "$RESULT" == "" ]; then
         echo "NG"
     else
         echo "OK"
     fi
 }
 
+argon_get_platform() {
+	CHECKPLATFORM="Others"
+	# Check if Raspbian, otherwise Ubuntu	
+	if (grep -q -F 'Raspbian' /etc/os-release &> /dev/null); then
+		CHECKPLATFORM="Raspbian"
+	fi
+}
+
+argon_get_pkglist() {
+	if [ "$CHECKPLATFORM" = "Raspbian" ]; then
+		pkglist=(raspi-gpio python3-rpi.gpio python3-smbus i2c-tools)
+	else
+		# Ubuntu has serial and i2c enabled
+		pkglist=(python3-rpi.gpio python3-smbus i2c-tools)
+	fi
+}
+
 # installs necessary packages
 argon_install_required_pkgs() {
-		pkglist=(raspi-gpio python-rpi.gpio python3-rpi.gpio python-smbus python3-smbus i2c-tools)
 		install_list=()
 		for curpkg in ${pkglist[@]}; do
 				RESULT=$(argon_check_pkg $curpkg)
@@ -580,6 +596,7 @@ argon_create_desktopshortcuts() {
 
 #Installation Process
 
+argon_get_platform
 if [ -z $NOPKG ]
 then
 	argon_install_required_pkgs
