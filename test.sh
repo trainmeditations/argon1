@@ -2,4 +2,4 @@
 rm -rf test
 #./mktest.sh
 mkdir -p test/apps
-PREFIX=test/usr/local CONF_PREFIX=test SHORTCUT_PREFIX=test/apps/ NOPKG=1 NOBUS=1 NOSVC=1 ./argon1.sh
+PREFIX=test/usr/local TEST_PREFIX=test CONF_PREFIX=test SHORTCUT_PREFIX=test/apps/ NOPKG=1 NOBUS=1 NOSVC=1 ./argon1.sh
