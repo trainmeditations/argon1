@@ -92,8 +92,13 @@ daemonfanservice="${PREFIX}/lib/systemd/system/${daemonname}.service"
 
 #enables i2c and serial busses
 argon_enable_busses() {
-	raspi-config nonint do_i2c 0
-	raspi-config nonint do_serial 0
+	# Ubuntu Mate for RPi has raspi-config too, so test for it
+	command -v raspi-config &> /dev/null
+	if [ $? -eq 0 ]
+	then
+		raspi-config nonint do_i2c 0
+		raspi-config nonint do_serial 0
+	fi
 }	
 
 #creates config file, only if file doesn't already exist
@@ -137,7 +142,7 @@ argon_create_shutdownscript() {
 	argon_create_file $shutdownscript
 
 	cat > $shutdownscript <<- EOF
-	#!/usr/bin/python
+	#!/usr/bin/python3
 	import sys
 	import smbus
 	import RPi.GPIO as GPIO
@@ -165,7 +170,7 @@ argon_create_powerbuttonscript() {
 	argon_create_file $powerbuttonscript
 
 	cat > $powerbuttonscript <<- EOF
-	#!/usr/bin/python
+	#!/usr/bin/python3
 	import smbus
 	import RPi.GPIO as GPIO
 	import os
@@ -248,9 +253,15 @@ argon_create_powerbuttonscript() {
 	    address=0x1a
 	    prevblock=0
 	    while True:
-	        temp = os.popen("vcgencmd measure_temp").readline()
-	        temp = temp.replace("temp=","")
-	        val = float(temp.replace("'C",""))
+
+			try:
+				tempfp = open("/sys/class/thermal/thermal_zone0/temp", "r")
+	        	temp = tempfp.readline()
+	        	tempfp.close()
+	        	val = float(int(temp)/1000)
+			except IOError:
+				val = 0
+				
 	        block = get_fanspeed(val, fanconfig)
 	        if block < prevblock:
 	            time.sleep(30)
