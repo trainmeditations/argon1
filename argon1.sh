@@ -155,6 +155,7 @@ argon_create_shutdownscript() {
 
 	if len(sys.argv)>1:
 	    bus.write_byte(0x1a,0)
+		#powercut signal
 	    if sys.argv[1] == "poweroff" or sys.argv[1] == "halt":
 	        try:
 	            bus.write_byte(0x1a,0xFF)
