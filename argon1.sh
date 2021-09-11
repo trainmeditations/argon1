@@ -324,6 +324,7 @@ argon_create_removescript() {
 	removescript=$removescript
 	daemonfanservice=$daemonfanservice
 	daemonconfigfile=$daemonconfigfile
+	irscript=$irscript
 	install_list=(${install_list[@]})
 	EOF
 	cat >> $removescript <<- "EOF"
@@ -366,6 +367,9 @@ argon_create_removescript() {
 	        echo
 			echo "If they are no longer needed you can remove them."
 		fi
+	fi
+	if [ -f $irscript ]; then
+		rm $irscript
 	fi
 	EOF
 
