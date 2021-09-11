@@ -89,6 +89,7 @@ daemonconfigfile="${CONF_PREFIX}/etc/${daemonname}.conf"
 configscript="${PREFIX}/bin/argonone-config"
 removescript="${PREFIX}/bin/argonone-uninstall"
 daemonfanservice="${PREFIX}/lib/systemd/system/${daemonname}.service"
+irscript="${PREFIX}/bin/argonone-ir"
 
 #enables i2c and serial busses
 argon_enable_busses() {
@@ -560,6 +561,11 @@ argon_enable_services() {
 	systemctl start $daemonname.service
 }
 
+argon_get_IRscript() {
+	wget https://download.argon40.com/argonone-irconfig.sh -O $irscript
+	chmod 755 $irscript
+}
+
 #Create desktop shortcuts
 argon_create_desktopshortcuts() {
 	if [ -d $SHORTCUT_PREFIX ]; then
@@ -625,6 +631,10 @@ argon_create_configscript
 if [ -z $NOSVC ]
 then
 	argon_enable_services
+fi
+if [ -z $NOIR ]
+then
+	argon_get_IRscript
 fi
 argon_create_desktopshortcuts
 

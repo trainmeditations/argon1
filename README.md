@@ -50,3 +50,4 @@ config and uninstall scripts
 - $NOPKG if set will skip package installation, debugging purposes
 - $NOBUS if set will skip enableing busses, debugging purposes
 - $NOSVC if set will skip systemd service reloading and starting, debug purpooses
+- $NOIR do not download and install IR control script
