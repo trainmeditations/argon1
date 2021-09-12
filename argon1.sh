@@ -210,7 +210,7 @@ argon_create_powerbuttonscript() {
 	        if tempval >= tempcfg:
 	            return fancfg
 	    return 0
-
+	
 	def load_config(fname):
 	    newconfig = []
 	    try:
@@ -256,14 +256,14 @@ argon_create_powerbuttonscript() {
 	    prevblock=0
 	    while True:
 
-			try:
-				tempfp = open("/sys/class/thermal/thermal_zone0/temp", "r")
-	        	temp = tempfp.readline()
-	        	tempfp.close()
-	        	val = float(int(temp)/1000)
-			except IOError:
-				val = 0
-				
+	        try:
+	            tempfp = open("/sys/class/thermal/thermal_zone0/temp", "r")
+	            temp = tempfp.readline()
+	            tempfp.close()
+	            val = float(int(temp)/1000)
+	        except IOError:
+	            val = 0
+	
 	        block = get_fanspeed(val, fanconfig)
 	        if block < prevblock:
 	            time.sleep(30)
