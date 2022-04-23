@@ -81,7 +81,7 @@ then
 	SHORTCUT_PREFIX="${PREFIX}/share/applications/"
 fi
 
-#filenames and locations
+# Helper variables: filenames and locations
 daemonname="argononed"
 powerbuttonscript="${PREFIX}/bin/${daemonname}.py"
 shutdownscript="${TEST_PREFIX}/lib/systemd/system-shutdown/${daemonname}-poweroff.py"
@@ -98,7 +98,7 @@ argon_enable_busses() {
 	if [ $? -eq 0 ]
 	then
 		raspi-config nonint do_i2c 0
-		raspi-config nonint do_serial 0
+		raspi-config nonint do_serial 2
 	fi
 }	
 
@@ -208,6 +208,8 @@ argon_create_powerbuttonscript() {
 	        tempcfg = float(curpair[0])
 	        fancfg = int(float(curpair[1]))
 	        if tempval >= tempcfg:
+				if fancfg < 25:
+					return 25
 	            return fancfg
 	    return 0
 	
@@ -269,6 +271,9 @@ argon_create_powerbuttonscript() {
 	            time.sleep(30)
 	        prevblock = block
 	        try:
+				if block > 0:
+					bus.write_byte(address,100)
+					time.sleep(1)
 	            bus.write_byte(address,block)
 	        except IOError:
 	            temp=""

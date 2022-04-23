@@ -46,10 +46,12 @@ done
 command -v raspi-config &> /dev/null
 if [ $? -eq 0 ]
 then
+	# Enable i2c and serial
 	sudo raspi-config nonint do_i2c 0
-	sudo raspi-config nonint do_serial 0
+	sudo raspi-config nonint do_serial 2
 fi
 
+# Helper variables
 daemonname="argononed"
 powerbuttonscript=/usr/bin/$daemonname.py
 shutdownscript="/lib/systemd/system-shutdown/"$daemonname"-poweroff.py"
@@ -153,6 +155,8 @@ echo '		curpair = curconfig.split("=")' >> $powerbuttonscript
 echo '		tempcfg = float(curpair[0])' >> $powerbuttonscript
 echo '		fancfg = int(float(curpair[1]))' >> $powerbuttonscript
 echo '		if tempval >= tempcfg:' >> $powerbuttonscript
+echo '			if fancfg < 25:' >> $powerbuttonscript
+echo '				return 25' >> $powerbuttonscript
 echo '			return fancfg' >> $powerbuttonscript
 echo '	return 0' >> $powerbuttonscript
 
@@ -214,6 +218,9 @@ echo '		if block < prevblock:' >> $powerbuttonscript
 echo '			time.sleep(30)' >> $powerbuttonscript
 echo '		prevblock = block' >> $powerbuttonscript
 echo '		try:' >> $powerbuttonscript
+echo '			if block > 0:' >> $powerbuttonscript
+echo '				bus.write_byte(address,100)' >> $powerbuttonscript
+echo '				time.sleep(1)' >> $powerbuttonscript
 echo '			bus.write_byte(address,block)' >> $powerbuttonscript
 echo '		except IOError:' >> $powerbuttonscript
 echo '			temp=""' >> $powerbuttonscript
@@ -473,6 +480,11 @@ sudo systemctl start $daemonname.service
 shortcutfile="/home/pi/Desktop/argonone-config.desktop"
 if [ "$CHECKPLATFORM" = "Raspbian" ] && [ -d "/home/pi/Desktop" ]
 then
+	terminalcmd="lxterminal --working-directory=/home/pi/ -t"
+	if  [ -f "/home/pi/.twisteros.twid" ]
+	then
+		terminalcmd="xfce4-terminal --default-working-directory=/home/pi/ -T"
+	fi
 	sudo wget http://download.argon40.com/ar1config.png -O /usr/share/pixmaps/ar1config.png --quiet
 	sudo wget http://download.argon40.com/ar1uninstall.png -O /usr/share/pixmaps/ar1uninstall.png --quiet
 	# Create Shortcuts
@@ -480,7 +492,7 @@ then
 	echo "Name=Argon One Configuration" >> $shortcutfile
 	echo "Comment=Argon One Configuration" >> $shortcutfile
 	echo "Icon=/usr/share/pixmaps/ar1config.png" >> $shortcutfile
-	echo 'Exec=lxterminal -t "Argon One Configuration" --working-directory=/home/pi/ -e '$configscript >> $shortcutfile
+	echo 'Exec='$terminalcmd' "Argon One Configuration" -e '$configscript >> $shortcutfile
 	echo "Type=Application" >> $shortcutfile
 	echo "Encoding=UTF-8" >> $shortcutfile
 	echo "Terminal=false" >> $shortcutfile
@@ -492,7 +504,7 @@ then
 	echo "Name=Argon One Uninstall" >> $shortcutfile
 	echo "Comment=Argon One Uninstall" >> $shortcutfile
 	echo "Icon=/usr/share/pixmaps/ar1uninstall.png" >> $shortcutfile
-	echo 'Exec=lxterminal -t "Argon One Uninstall" --working-directory=/home/pi/ -e '$removescript >> $shortcutfile
+	echo 'Exec='$terminalcmd' -t "Argon One Uninstall" --working-directory=/home/pi/ -e '$removescript >> $shortcutfile
 	echo "Type=Application" >> $shortcutfile
 	echo "Encoding=UTF-8" >> $shortcutfile
 	echo "Terminal=false" >> $shortcutfile
