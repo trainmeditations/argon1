@@ -208,8 +208,8 @@ argon_create_powerbuttonscript() {
 	        tempcfg = float(curpair[0])
 	        fancfg = int(float(curpair[1]))
 	        if tempval >= tempcfg:
-				if fancfg < 25:
-					return 25
+	            if fancfg < 25:
+	                return 25
 	            return fancfg
 	    return 0
 	
@@ -271,9 +271,9 @@ argon_create_powerbuttonscript() {
 	            time.sleep(30)
 	        prevblock = block
 	        try:
-				if block > 0:
-					bus.write_byte(address,100)
-					time.sleep(1)
+	            if block > 0:
+	                bus.write_byte(address,100)
+	                time.sleep(1)
 	            bus.write_byte(address,block)
 	        except IOError:
 	            temp=""
@@ -624,12 +624,11 @@ argon_create_desktopshortcuts() {
 #Installation Process
 
 argon_get_platform
-if [ -z $NOPKG ]
-then
+argon_get_pkglist
+if [ -z $NOPKG ]; then
 	argon_install_required_pkgs
 fi
-if [ -z $NOBUS ]
-then
+if [ -z $NOBUS ]; then
 	argon_enable_busses
 fi
 argon_create_daemonconfigfile
