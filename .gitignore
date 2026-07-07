@@ -4,3 +4,5 @@ localtest
 *.png
 notes
 .vscode
+TODOs
+argon1.wget.sh
